@@ -1,0 +1,162 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Otto Automator and ch7883j22jdiyhjjj",
+	"identifier": "com.omni-automation.of.packing-list-4",
+	"version": "4.0",
+	"description": "Creates a project of single-actions used as a packing list for domestic/international travel in hot and/or cold climates.",
+	"label": "Packing List",
+	"shortLabel": "Packing List",
+	"image": "suitcase.fill"
+}*/
+
+var _ = function(){
+	
+	var action = new PlugIn.Action(function(selection, sender) {
+	
+		var inputForm = new Form()
+		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
+
+		taskNameField = new Form.Field.String(
+			"tripTitle",
+			"Packing List for "
+		)
+		departureDateField = new Form.Field.Date(
+			"departureDate",
+			"Departure Date:",
+			null,
+			dateFormatter
+		)
+		returnDateField = new Form.Field.Date(
+			"returnDate",
+			"Return Date:",
+			null,
+			dateFormatter
+		)
+		checkboxInternational = new Form.Field.Checkbox(
+			"checkboxInternational",
+			"Traveling Internationally?",
+			false
+		)
+		checkboxCold = new Form.Field.Checkbox(
+			"checkboxCold",
+			"Cold Destination Climate?",
+			false
+		)
+		checkboxHot = new Form.Field.Checkbox(
+			"checkboxHot",
+			"Hot Destination Climate?",
+			false
+		)
+		
+		inputForm.addField(taskNameField)
+		inputForm.addField(departureDateField)
+		inputForm.addField(returnDateField)
+		inputForm.addField(checkboxCold)
+		inputForm.addField(checkboxHot)
+		inputForm.addField(checkboxInternational)
+	
+		formPromise = inputForm.show("Enter the trip details","Continue")
+		
+		inputForm.validate = function(formObject){
+			currentDateTime = new Date()
+			departureDateObject = formObject.values["departureDate"]
+			departureDateStatus = (departureDateObject && departureDateObject > currentDateTime) ? true:false
+			returnDateObject = formObject.values["returnDate"]
+			returnDateStatus = (returnDateObject && returnDateObject > departureDateObject) ? true:false
+			textValue = formObject.values["tripTitle"]
+			textStatus = (textValue && textValue.length > 0) ? true:false
+
+			validation = (textStatus && departureDateStatus && returnDateStatus) ? true:false
+			return validation
+		}
+		
+		formPromise.then(function(formObject){		
+			tripTitle = formObject.values['tripTitle']
+			var StartDate = formObject.values['departureDate']
+			var EndDate = formObject.values['returnDate']
+			var tripDuration = (Date.UTC(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate()) - Date.UTC(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate())) / 86400000;
+			//Change the final four numbers to adjust the time
+            var PreviousDay = new Date(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate() - 1, 19, 30, 0, 0)
+            //Change the final four numbers to adjust the time
+            var PostDay = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() + 1, 19, 00, 0, 0)
+            //Change the final four numbers to adjust the time
+			var PreReturnDay = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() - 1, 20, 30, 0, 0)
+			var tripClimateCold = formObject.values['checkboxCold']
+			var tripClimateHot = formObject.values['checkboxHot']
+			var tripInternational = formObject.values['checkboxInternational']
+			
+			projectName = "Packing List for " + tripTitle
+			var project = projectNamed(projectName) || new Project(projectName) 
+			project.status = Project.Status.Active
+			project.containsSingletonActions = true
+
+			//These are items that should be added to any trip regardless of climate or international status.
+            packingItemsBase = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
+			//This is the default count of items added from the packingItemsBase list.
+            packingItems1PerDay = ["Underwear", "Socks", "Shirts", "Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4"]
+			//This changes the count of items added from the packingItemsBase list from one per day to one per two days.
+            packingItems1Per2Day = ["Shorts/Pants"]
+			//This changes the count of items added from the packingItemsBase list from one per day to two per day.
+			packingItems2Per1Day = ["Medicine 5"]
+			//These are items that should have a due date of the night before depature.
+            packingItemsPreviousDayToDeparture = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
+			packingItemsPreReturnDay = ["Ensure all devices are charged up for the return trip"]
+			packingItemsPostDayAfterReturn = ["Upload the remaining photos to the Photo Stream", "Turn off 1Password Travel Mode"]
+			//Add items here only for hot climate travels.
+			packingItemsHotClimate = ["Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Hiking boots"]
+			//Add items here only for cold climate travels.
+			packingItemsColdClimate = ["Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
+			//Add items here only for international travel.
+			packingItemsInternational = ["Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter"]
+
+			packingItems = tripInternational ? packingItemsInternational.concat(packingItemsBase) : packingItemsBase;
+			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
+			packingItems = tripClimateHot ? packingItemsHotClimate.concat(packingItems) : packingItems;
+
+            packingItems.forEach((packingItem)=>{
+                var amount = (packingItems1PerDay.includes(packingItem)) ? Number(tripDuration) : 1
+                if (packingItems1PerDay.includes(packingItem)){
+                    amount = Number(tripDuration)
+                } else if (packingItems1Per2Day.includes(packingItem)){
+                    amount = Number(tripDuration) / 2
+                    amount = (amount < 1) ? 1 : Math.ceil(amount)
+				} else if (packingItems2Per1Day.includes(packingItem)){
+                    amount = Number(tripDuration) * 2
+                    amount = (amount < 1) ? 1 : Math.ceil(amount)
+                } else {
+                    amount = 1
+                }
+				if (packingItemsPreviousDayToDeparture.includes(packingItem)){
+                    actionDate = PreviousDay
+                } else if (packingItemsPostDayAfterReturn.includes(packingItem)){
+					actionDate = PostDay
+				} else if (packingItemsPreReturnDay.includes(packingItem)){
+					actionDate = PreReturnDay
+				}
+				else {
+					actionDate = StartDate
+				}
+                suffix = (amount > 1) ? ` (${amount})` : ""
+                action = project.taskNamed(packingItem + suffix) || new Task(packingItem + suffix, project)
+                action.dueDate = actionDate
+                	//action.note = ""
+			})
+			document.windows[0].perspective = Perspective.BuiltIn.Projects
+			document.windows[0].selectObjects([project])
+		})
+		
+		formPromise.catch(function(err){
+			console.log("form cancelled", err.message)
+		})
+	});
+
+	action.validate = function(selection, sender) {
+		// validation code
+		// selection options: tasks, projects, folders, tags
+		return true
+	};
+	
+	return action;
+}();
+_;
