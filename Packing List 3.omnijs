@@ -92,23 +92,23 @@ var _ = function(){
 			project.containsSingletonActions = true
 
 			//These are items that should be added to any trip regardless of climate or international status.
-            packingItemsBase = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
+            packingItemsBase = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
 			//This is the default count of items added from the packingItemsBase list.
             packingItems1PerDay = ["Underwear", "Socks", "Shirts", "Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4"]
 			//This changes the count of items added from the packingItemsBase list from one per day to one per two days.
             packingItems1Per2Day = ["Shorts/Pants"]
 			//This changes the count of items added from the packingItemsBase list from one per day to two per day.
 			packingItems2Per1Day = ["Medicine 5"]
-			//These are items that should have a due date of the night before depature.
-            packingItemsPreviousDayToDeparture = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
-			packingItemsPreReturnDay = ["Ensure all devices are charged up for the return trip"]
+			//These are items that should have a due date of the night before departure.
+            packingItemsPreviousDayToDeparture = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Blister Protectors", "Wine Angels"]
+			packingItemsPreReturnDay = ["Ensure all devices are charged up for the return trip", "Turn on 1Password Travel Mode"]
 			packingItemsPostDayAfterReturn = ["Upload the remaining photos to the Photo Stream", "Turn off 1Password Travel Mode"]
 			//Add items here only for hot climate travels.
 			packingItemsHotClimate = ["Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Hiking boots"]
 			//Add items here only for cold climate travels.
 			packingItemsColdClimate = ["Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
 			//Add items here only for international travel.
-			packingItemsInternational = ["Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter"]
+			packingItemsInternational = ["Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter", "Power strip"]
 
 			packingItems = tripInternational ? packingItemsInternational.concat(packingItemsBase) : packingItemsBase;
 			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
