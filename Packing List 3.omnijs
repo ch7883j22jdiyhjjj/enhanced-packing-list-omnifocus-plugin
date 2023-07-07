@@ -48,22 +48,22 @@ var _ = function(){
 			"Hot Destination Climate?",
 			false
 		)
-		checkboxFormalAttire = new Form.Field.Checkbox(
-			"checkboxFormalAttire",
+		checkboxFormal = new Form.Field.Checkbox(
+			"checkboxFormal",
 			"Formal Attire Required?",
 			false
 		)
-		
+
 		inputForm.addField(taskNameField)
 		inputForm.addField(departureDateField)
 		inputForm.addField(returnDateField)
 		inputForm.addField(checkboxCold)
 		inputForm.addField(checkboxHot)
 		inputForm.addField(checkboxInternational)
-		inputForm.addField(checkboxFormalAttire)
-	
+		inputForm.addField(checkboxFormal)
+
 		formPromise = inputForm.show("Enter the trip details","Continue")
-		
+
 		inputForm.validate = function(formObject){
 			currentDateTime = new Date()
 			departureDateObject = formObject.values["departureDate"]
@@ -76,29 +76,26 @@ var _ = function(){
 			validation = (textStatus && departureDateStatus && returnDateStatus) ? true:false
 			return validation
 		}
-		
-		formPromise.then(function(formObject){		
+
+		formPromise.then(function(formObject){
 			tripTitle = formObject.values['tripTitle']
 			var StartDate = formObject.values['departureDate']
 			var EndDate = formObject.values['returnDate']
 			var tripDuration = (Date.UTC(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate()) - Date.UTC(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate())) / 86400000;
-			//Change the final four numbers to adjust the time
             var PreviousDay = new Date(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate() - 1, 19, 30, 0, 0)
-            //Change the final four numbers to adjust the time
             var PostDay = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() + 1, 19, 00, 0, 0)
-            //Change the final four numbers to adjust the time
 			var PreReturnDay = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() - 1, 20, 30, 0, 0)
 			var tripClimateCold = formObject.values['checkboxCold']
 			var tripClimateHot = formObject.values['checkboxHot']
 			var tripInternational = formObject.values['checkboxInternational']
-			var tripFormalAttire = formObject.values['checkboxFormalAttire']
-			
+			var tripFormalAttire = formObject.values['checkboxFormal']
+
 			projectName = "Packing List for " + tripTitle
-			var project = projectNamed(projectName) || new Project(projectName) 
+			var project = projectNamed(projectName) || new Project(projectName)
 			project.status = Project.Status.Active
 			project.containsSingletonActions = true
 
-			//These are items that should be added to any trip regardless of climate or international status.
+			//These are items that should be added to any trip regardless of climate, international status, or formal attire.
             packingItemsBase = ["Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4", "Medicine 5", "Going out bag", "Reusable bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", "Underwear", "Socks", "Shirts", "Shorts/Pants", "Belt", "Apple Watch Bands Box", "Turn off Hue Automations", "Turn off DJ Roomba Automation", "Turn off Macs", "Power block", "Charging cables bag", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
 			//This is the default count of items added from the packingItemsBase list.
             packingItems1PerDay = ["Underwear", "Socks", "Shirts", "Medicine 1", "Medicine 2", "Medicine 3", "Medicine 4"]
@@ -116,10 +113,11 @@ var _ = function(){
 			packingItemsColdClimate = ["Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
 			//Add items here only for international travel.
 			packingItemsInternational = ["Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter", "Power strip"]
-			//Add items here only if formal attire is required.
+            //Add items here only if formal attire is required.
             packingItemsFormalAttire = ["Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt"]
 
-			packingItems = tripInternational ? packingItemsInternational.concat(packingItems) : packingItems;
+
+			packingItems = tripInternational ? packingItemsInternational.concat(packingItemsBase) : packingItemsBase;
 			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
 			packingItems = tripClimateHot ? packingItemsHotClimate.concat(packingItems) : packingItems;
 			packingItems = tripFormalAttire ? packingItemsFormalAttire.concat(packingItems) : packingItems;
@@ -155,9 +153,9 @@ var _ = function(){
 			document.windows[0].perspective = Perspective.BuiltIn.Projects
 			document.windows[0].selectObjects([project])
 		})
-		
+
 		formPromise.catch(function(err){
-			console.log("form cancelled", err.message)
+			console.log("form cancelled:", err.message)
 		})
 	});
 
