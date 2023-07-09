@@ -53,6 +53,11 @@ var _ = function(){
 			"Formal Attire Required?",
 			false
 		)
+		checkboxUsa = new Form.Field.Checkbox(
+			"checkboxUsa",
+			"Traveling to the USA?",
+			false
+		)
 
 		inputForm.addField(taskNameField)
 		inputForm.addField(departureDateField)
@@ -61,6 +66,7 @@ var _ = function(){
 		inputForm.addField(checkboxHot)
 		inputForm.addField(checkboxInternational)
 		inputForm.addField(checkboxFormal)
+		inputForm.addField(checkboxUsa)
 
 		formPromise = inputForm.show("Enter the trip details","Continue")
 
@@ -89,6 +95,7 @@ var _ = function(){
 			var tripClimateHot = formObject.values['checkboxHot']
 			var tripInternational = formObject.values['checkboxInternational']
 			var tripFormalAttire = formObject.values['checkboxFormal']
+			var tripUsa = formObject.values['checkboxUsa']
 
 			projectName = "Packing List for " + tripTitle
 			var project = projectNamed(projectName) || new Project(projectName)
@@ -115,12 +122,14 @@ var _ = function(){
 			packingItemsInternational = ["Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter", "Power strip"]
             //Add items here only if formal attire is required.
             packingItemsFormalAttire = ["Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt"]
+            packingItemsUsa = ["Tourniquet", "Hemostatic gauze"]
 
 
 			packingItems = tripInternational ? packingItemsInternational.concat(packingItemsBase) : packingItemsBase;
 			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
 			packingItems = tripClimateHot ? packingItemsHotClimate.concat(packingItems) : packingItems;
 			packingItems = tripFormalAttire ? packingItemsFormalAttire.concat(packingItems) : packingItems;
+			packingItems = tripUsa ? packingItemsUsa.concat(packingItems) : packingItems;
 
             packingItems.forEach((packingItem)=>{
                 var amount = (packingItems1PerDay.includes(packingItem)) ? Number(tripDuration) : 1
