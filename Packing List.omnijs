@@ -2,8 +2,8 @@
 	"type": "action",
 	"targets": ["omnifocus"],
 	"author": "Otto Automator and Ian Rice",
-	"identifier": "com.omni-automation.of.packing-list-4",
-	"version": "4.5",
+	"identifier": "com.omni-automation.of.packing-list-5",
+	"version": "5",
 	"description": "Creates a project of single-actions used as a packing list for domestic/international travel in hot and/or cold climates.",
 	"label": "Packing List",
 	"shortLabel": "Packing List",
@@ -16,6 +16,8 @@ var _ = function(){
 
 		var inputForm = new Form()
 		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
+		var plistPath = '/Users/ian/Library/Mobile Documents/iCloud~com~omnigroup~OmniFocus/Documents/Plug-Ins/configTravel.plist';
+        var plistContents = app.readPlist(plistPath);
 
 		taskNameField = new Form.Field.String(
 			"tripTitle",
@@ -124,15 +126,18 @@ var _ = function(){
 			project.containsSingletonActions = true
 
             //Personal details
-            var Medicine1 = "Medicine1"
-            var Medicine2 = "Medicine2"
-            var Medicine3 = "Medicine3"
-            var Medicine4 = "Medicine4"
-            var Postcard1 = "Send <name> a post card"
-            var Postcard2 = "Send <name> a post card"
+            var Medicine1 = plistContents.Medicine1
+            var Medicine2 = plistContents.Medicine2
+            var Medicine3 = plistContents.Medicine3
+            var Medicine4 = plistContents.Medicine4
+            var Postcard1 = plistContents.Postcard1
+            var Postcard2 = plistContents.Postcard2
+            var Playlist1 = plistContents.Playlist1
+            var Playlist2 = plistContents.Playlist2
+            var Playlist3 = plistContents.Playlist3
 
 			//These are items that should be added to any trip regardless of climate, international status, or formal attire.
-            packingItemsBase = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", "Ensure Haven't Heard in a While playlist is downloaded", "Ensure Feel Through the Cracks playlist is downloaded", "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Belt", "Apple Watch Bands Container", "Turn off Hue automation(s)", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
+            packingItemsBase = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Belt", "Apple Watch Bands Container", "Turn off Hue automation(s)", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
 			//This is the default count of items added from the packingItemsBase list.
             packingItems1PerDay = [Medicine1, Medicine2, Medicine3, "Underwear", "Socks", "Shirts"]
 			//This changes the count of items added from the packingItemsBase list from one per day to one per two days.
@@ -140,7 +145,7 @@ var _ = function(){
 			//This changes the count of items added from the packingItemsBase list from one per day to two per day.
 			packingItems2Per1Day = [Medicine4]
 			//These are items that should have a due date of the night before departure.
-            packingItemsPreviousDayToDeparture = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", "Ensure Haven't Heard in a While playlist is downloaded", "Ensure Feel Through the Cracks playlist is downloaded", "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt", "Apple Watch Bands Container", "Turn off Hue automation(s)", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block",  "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Ensure Download - Travel playlist is downloaded", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my Weekly Review of work projects"]
+            packingItemsPreviousDayToDeparture = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt", "Apple Watch Bands Container", "Turn off Hue automation(s)", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block",  "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my Weekly Review of work projects"]
             //These are items that should have a due date of the night before returning home.
 			packingItemsPreReturnDay = ["Ensure all devices are charged up for the return trip"]
 			//These are items that should have a due date of the day after returning home.
