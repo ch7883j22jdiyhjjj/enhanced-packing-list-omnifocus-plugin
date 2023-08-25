@@ -151,12 +151,6 @@ var _ = function(){
 
 		var inputForm = new Form()
 		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
-		var configFilePath = '/Users/ian/Library/Mobile Documents/iCloud~com~omnigroup~OmniFocus/Documents/Plug-Ins/configTravel.json';
-        var fileManager = FileManager.defaultManager();
-
-        if (fileManager.fileExistsAtPath(configFilePath)) {
-            var configFileContents = fileManager.readStringAtPath(configFilePath);
-            var configData = JSON.parse(configFileContents);
 
             //Personal details
             var Medicine1 = configData.Medicine1
