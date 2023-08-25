@@ -10,6 +10,141 @@
 	"image": "suitcase.fill"
 }*/
 
+(() => {
+	var preferences = new Preferences()
+
+	const action = new PlugIn.Action(async function(selection, sender){
+		try {
+			// selection options: tasks, projects, folders, tags, databaseObjects, allObjects
+
+			// HOLD DOWN CONTROL KEY TO RESET VALUES
+			if (app.controlKeyDown){
+				console.log("Show Alert")
+				alertMessage = "Remove the stored values?"
+				alert = new Alert("Confirmation Required", alertMessage)
+				alert.addOption("Remove")
+				alert.addOption("Cancel")
+				alert.show(buttonIndex => {
+					if (buttonIndex === 0){
+						preferences.remove("optionsMenu")
+						preferences.remove("textInput")
+						preferences.remove("checkboxSwitch")
+						preferences.remove("dateInput")
+					}
+				})
+			} else {
+
+				// DEFAULT VALUES
+				defaultMenuIndex = 0
+				defaultNameValue = ""
+				defaultBooleanValue = false
+				defaultdateValue = new Date()
+
+				// READ STORED VALUES IF ANY. SET DEFAULTS IF NEEDED.
+				menuIndex = preferences.readNumber("optionsMenu")
+				console.log("menuIndex-stored", menuIndex)
+				if(!menuIndex){
+					menuIndex = defaultMenuIndex
+				}
+
+				nameValue = preferences.readString("textInput")
+				console.log("nameValue-stored", nameValue)
+				if(!nameValue){
+					nameValue = defaultNameValue
+				}
+
+				booleanValue = preferences.readBoolean("checkboxSwitch")
+				console.log("booleanValue-stored", booleanValue)
+				if(!booleanValue){
+					booleanValue = defaultBooleanValue
+				}
+
+				dateValue = preferences.readDate("dateInput")
+				console.log("dateValue-stored", dateValue)
+				if(!dateValue){
+					dateValue = defaultdateValue
+				}
+
+				// CONSTRUCT THE FORM
+				menuItems = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+				menuIndexes = [0,1,2,3,4,5,6]
+				optionsMenu = new Form.Field.Option(
+					"optionsMenu",
+					"Weekday",
+					menuIndexes,
+					menuItems,
+					menuIndex
+				)
+
+				textInputField = new Form.Field.String(
+					"textInput",
+					"Name",
+					nameValue
+				)
+
+				checkSwitchField = new Form.Field.Checkbox(
+					"checkboxSwitch",
+					"I accept the standard terms and conditions",
+					booleanValue
+				)
+
+				dateInputField = new Form.Field.Date(
+					"dateInput",
+					"Date",
+					dateValue
+				)
+
+				inputForm = new Form()
+				inputForm.addField(optionsMenu)
+				inputForm.addField(textInputField)
+				inputForm.addField(checkSwitchField)
+				inputForm.addField(dateInputField)
+
+				inputForm.validate = function(formObject){
+					return true
+				}
+
+				formPrompt = "Make selections and enter values:"
+				buttonTitle = "Continue"
+				formObject = await inputForm.show(formPrompt, buttonTitle)
+
+				menuIndex = formObject.values['optionsMenu']
+				console.log('menuIndex-write', menuIndex)
+
+				nameValue = formObject.values['textInput']
+				if(!nameValue){nameValue = ""} // convert null to empty string
+				console.log('nameValue-write', nameValue)
+
+				booleanValue = formObject.values['checkboxSwitch']
+				console.log('booleanValue-write', booleanValue)
+
+				dateValue = formObject.values['dateInput']
+				console.log('dateValue-write', dateValue)
+
+				// STORE THE VALUES
+				preferences.write("optionsMenu", menuIndex)
+				preferences.write("textInput", nameValue)
+				preferences.write("checkboxSwitch", booleanValue)
+				preferences.write("dateInput", dateValue)
+			}
+		}
+		catch(err){
+			if(!err.causedByUserCancelling){
+				console.error(err.name, err.message)
+				//new Alert(err.name, err.message).show()
+			}
+		}
+	});
+
+	action.validate = function(selection, sender){
+		// selection options: tasks, projects, folders, tags, databaseObjects, allObjects
+		return true
+	};
+
+	return action;
+})();
+
+
 var _ = function(){
 
 	var action = new PlugIn.Action(function(selection, sender) {
