@@ -16,8 +16,25 @@ var _ = function(){
 
 		var inputForm = new Form()
 		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
-		var plistPath = '/Users/ian/Library/Mobile Documents/iCloud~com~omnigroup~OmniFocus/Documents/Plug-Ins/configTravel.plist';
-        var plistContents = app.readPlist(plistPath);
+		var configFilePath = '/Users/ian/Library/Mobile Documents/iCloud~com~omnigroup~OmniFocus/Documents/Plug-Ins/configTravel.json';
+        var fileManager = FileManager.defaultManager();
+
+        if (fileManager.fileExistsAtPath(configFilePath)) {
+            var configFileContents = fileManager.readStringAtPath(configFilePath);
+            var configData = JSON.parse(configFileContents);
+
+            //Personal details
+            var Medicine1 = configData.Medicine1
+            var Medicine2 = configData.Medicine2
+            var Medicine3 = configData.Medicine3
+            var Medicine4 = configData.Medicine4
+            var Postcard1 = configData.Postcard1
+            var Postcard2 = configData.Postcard2
+            var Playlist1 = configData.Playlist1
+            var Playlist2 = configData.Playlist2
+            var Playlist3 = configData.Playlist3
+        }
+
 
 		taskNameField = new Form.Field.String(
 			"tripTitle",
@@ -125,16 +142,6 @@ var _ = function(){
 			project.status = Project.Status.Active
 			project.containsSingletonActions = true
 
-            //Personal details
-            var Medicine1 = plistContents.Medicine1
-            var Medicine2 = plistContents.Medicine2
-            var Medicine3 = plistContents.Medicine3
-            var Medicine4 = plistContents.Medicine4
-            var Postcard1 = plistContents.Postcard1
-            var Postcard2 = plistContents.Postcard2
-            var Playlist1 = plistContents.Playlist1
-            var Playlist2 = plistContents.Playlist2
-            var Playlist3 = plistContents.Playlist3
 
 			//These are items that should be added to any trip regardless of climate, international status, or formal attire.
             packingItemsBase = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Belt", "Apple Watch Bands Container", "Turn off Hue automation(s)", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip"]
