@@ -2,20 +2,68 @@
 	"type": "action",
 	"targets": ["omnifocus"],
 	"author": "Otto Automator and Ian Rice",
-	"identifier": "com.omni-automation.of.packing-list-4",
-	"version": "4.5",
+	"identifier": "com.omni-automation.of.packing-list-5",
+	"version": "5",
 	"description": "Creates a project of single-actions used as a packing list for domestic/international travel in hot and/or cold climates.",
-	"label": "Packing List",
-	"shortLabel": "Packing List",
+	"label": "Packing List 5",
+	"shortLabel": "Packing List 5",
 	"image": "suitcase.fill"
 }*/
 
 var _ = function(){
-
+var preferences = new Preferences()
 	var action = new PlugIn.Action(function(selection, sender) {
 
 		var inputForm = new Form()
 		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
+
+			// HOLD DOWN CONTROL KEY TO RESET VALUES
+			if (app.controlKeyDown){
+				console.log("Show Alert")
+				alertMessage = "Remove the stored values Ian?"
+				alert = new Alert("Confirmation Required Ian", alertMessage)
+				alert.addOption("Remove")
+				alert.addOption("Cancel")
+				alert.show(buttonIndex => {
+					if (buttonIndex === 0){
+						preferences.remove("Medicine1")
+						preferences.remove("Medicine2")
+						preferences.remove("Medicine3")
+						preferences.remove("Medicine4")
+					}
+				})
+			} else {
+
+				// DEFAULT VALUES
+				defaultMedicine1 = ""
+				defaultMedicine2 = ""
+				defaultMedicine3 = ""
+				defaultMedicine4 = ""
+
+				// READ STORED VALUES IF ANY. SET DEFAULTS IF NEEDED.
+				Medicine1 = preferences.readString("Medicine1")
+				console.log("Medicine1-stored", Medicine1)
+				if(!Medicine1){
+					Medicine1 = defaultMedicine1
+				}
+
+				Medicine2 = preferences.readString("Medicine2")
+				console.log("Medicine2-stored", Medicine2)
+				if(!Medicine2){
+					Medicine2 = defaultMedicine2
+				}
+
+				Medicine3 = preferences.readString("Medicine3")
+				console.log("Medicine3-stored", Medicine3)
+				if(!Medicine3){
+					Medicine3 = defaultMedicine3
+				}
+
+				Medicine4 = preferences.readString("Medicine4")
+				console.log("Medicine4-stored", Medicine4)
+				if(!Medicine4){
+					Medicine4 = defaultMedicine4
+				}
 
 		taskNameField = new Form.Field.String(
 			"tripTitle",
@@ -214,6 +262,12 @@ var _ = function(){
 		formPromise.catch(function(err){
 			console.log("form cancelled:", err.message)
 		})
+				// STORE THE VALUES
+				preferences.write("optionsMenu", menuIndex)
+				preferences.write("textInput", nameValue)
+				preferences.write("checkboxSwitch", booleanValue)
+				preferences.write("dateInput", dateValue)
+			}
 	});
 
 	action.validate = function(selection, sender) {
