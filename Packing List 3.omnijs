@@ -150,7 +150,7 @@ var _ = function(){
 			//Add items here only for cold climate travels.
 			packingItemsColdClimate = ["Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Pants"]
 			//Add items here only for international travel.
-			packingItemsInternational = [Postcard1, Postcard2, "Switch YNAB BUdget to the local currency", "Ensure the local language in the translate app is downloaded", "Defer OmniFocus weekly review", "Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter"]
+			packingItemsInternational = [Postcard1, Postcard2, "Switch YNAB Budget to the local currency", "Ensure the local language in the translate app is downloaded", "Defer OmniFocus weekly review", "Passport", "Turn on 1Password Travel Mode", "Turn off 1Password Travel Mode", "Power converter"]
             //Add items here only if formal attire is required.
             packingItemsFormalAttire = ["Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt"]
             //Add safety items when travelling to the USA.
