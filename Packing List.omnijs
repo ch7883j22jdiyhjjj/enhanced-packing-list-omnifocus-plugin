@@ -222,17 +222,37 @@ var _ = function(){
 
 
             //----------------ITEMS TO INCLUDE IN PROJECT------------------------------------
-			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
-			packingItems = tripClimateHot ? packingItemsHotClimate.concat(packingItems) : packingItems;
-			packingItems = tripVarClimate ? packingItemsVarClimate.concat(packingItems) : packingItems;
+            if (tripVarClimate) {
+                packingItems = packingItemsVarClimate.concat(packingItems);
+            }
 
-			packingItems = tripInternational ? packingItemsInternational.concat(packingItems) : packingItems;
-			packingItems = tripUsa ? packingItemsUsa.concat(packingItems) : packingItems;
+            if (tripClimateCold) {
+                packingItems = packingItemsColdClimate.concat(packingItems);
+            }
 
-			packingItems = tripFormalAttire ? packingItemsFormalAttire.concat(packingItems) : packingItems;
-			packingItems = tripPet ? packingItemsPet.concat(packingItems) : packingItems;
-			packingItems = tripWork ? packingItemsWork.concat(packingItems) : packingItems;
+            if (tripClimateHot) {
+                packingItems = packingItemsHotClimate.concat(packingItems);
+            }
 
+            if (tripInternational) {
+                packingItems = packingItemsInternational.concat(packingItems);
+            }
+
+            if (tripUsa) {
+                packingItems = packingItemsUsa.concat(packingItems);
+            }
+
+            if (tripFormalAttire) {
+                packingItems = packingItemsFormalAttire.concat(packingItems);
+            }
+
+            if (tripPet) {
+                packingItems = packingItemsPet.concat(packingItems);
+            }
+
+            if (tripWork) {
+                packingItems = packingItemsWork.concat(packingItems);
+            }
 
             packingItems.forEach((packingItem)=>{
                 var amount = (packingItems1PerDay.includes(packingItem)) ? Number(tripDuration) : 1
