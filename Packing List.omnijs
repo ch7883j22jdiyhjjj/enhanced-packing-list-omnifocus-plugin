@@ -1,0 +1,286 @@
+/*{
+	"type": "action",
+	"targets": ["omnifocus"],
+	"author": "Otto Automator and Ian Rice",
+	"identifier": "com.omni-automation.of.packing-list.enhanced",
+	"version": "5.0",
+	"description": "Creates a project of single-actions used as a packing list for domestic/international travel in hot and/or cold climates.",
+	"label": "Packing List",
+	"shortLabel": "Packing List",
+	"image": "suitcase.fill"
+}*/
+
+var _ = function(){
+
+	var action = new PlugIn.Action(function(selection, sender) {
+
+		var inputForm = new Form()
+		var dateFormatter = Formatter.Date.withStyle(Formatter.Date.Style.Short, Formatter.Date.Style.Short)
+
+
+        //----------------TASK FIELD DEFINITIONS------------------------------------
+        //The choices are arranged such that they appear longest to shortest with the exception of the clean the house as it is still in development.
+		taskNameField = new Form.Field.String(
+			"tripTitle",
+			"Packing List for "
+		)
+		departureDateField = new Form.Field.Date(
+			"departureDate",
+			"Departure Date:",
+			null,
+			dateFormatter
+		)
+		returnDateField = new Form.Field.Date(
+			"returnDate",
+			"Return Date:",
+			null,
+			dateFormatter
+		)
+		checkboxInternational = new Form.Field.Checkbox(
+			"checkboxInternational",
+			"Traveling Internationally?",
+			false
+		)
+		checkboxCold = new Form.Field.Checkbox(
+			"checkboxCold",
+			"Cold Destination Climate?",
+			false
+		)
+		checkboxHot = new Form.Field.Checkbox(
+			"checkboxHot",
+			"Hot Destination Climate?",
+			false
+		)
+		checkboxFormal = new Form.Field.Checkbox(
+			"checkboxFormal",
+			"Formal Attire Required?",
+			false
+		)
+		checkboxUsa = new Form.Field.Checkbox(
+			"checkboxUsa",
+			"Traveling to the USA?",
+			false
+		)
+		checkboxPet = new Form.Field.Checkbox(
+			"checkboxPet",
+			"Is <petName> travelling?",
+			false
+		)
+		checkboxWork = new Form.Field.Checkbox(
+			"checkboxWork",
+			"OOO?",
+			false
+		)
+		checkboxVarClimate = new Form.Field.Checkbox(
+			"checkboxVarClimate",
+			"Variable Destination Climate?",
+			false
+		)
+		checkboxCleanHouse = new Form.Field.Checkbox(
+			"checkboxCleanHouse",
+			"Clean the house?",
+			false
+		)
+
+
+		//----------------ADD TASK FIELD TO FORM------------------------------------
+		inputForm.addField(taskNameField)
+		inputForm.addField(departureDateField)
+		inputForm.addField(returnDateField)
+		inputForm.addField(checkboxVarClimate)
+		inputForm.addField(checkboxCold)
+		inputForm.addField(checkboxHot)
+		inputForm.addField(checkboxInternational)
+		inputForm.addField(checkboxFormal)
+		inputForm.addField(checkboxUsa)
+		inputForm.addField(checkboxPet)
+		inputForm.addField(checkboxWork)
+		inputForm.addField(checkboxCleanHouse)
+
+
+		//----------------FIELD VALIDATIONS------------------------------------
+		inputForm.validate = function(formObject){
+			currentDateTime = new Date()
+			departureDateObject = formObject.values["departureDate"]
+			departureDateStatus = (departureDateObject && departureDateObject > currentDateTime) ? true:false
+			returnDateObject = formObject.values["returnDate"]
+			returnDateStatus = (returnDateObject && returnDateObject > departureDateObject) ? true:false
+			textValue = formObject.values["tripTitle"]
+			textStatus = (textValue && textValue.length > 0) ? true:false
+
+			validation = (textStatus && departureDateStatus && returnDateStatus) ? true:false
+			return validation
+		}
+
+
+		//----------------FORM PROMISES------------------------------------
+		formPromise = inputForm.show("Enter the trip details","Continue")
+		formPromise.then(function(formObject){
+			tripTitle = formObject.values['tripTitle']
+			var StartDate = formObject.values['departureDate']
+			var EndDate = formObject.values['returnDate']
+			var tripDuration = (Date.UTC(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate()) - Date.UTC(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate())) / 86400000;
+
+			var TwoDaysBeforeDepartureDay = new Date(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate() - 2, 19, 30, 0, 0)
+            var PreDepartureDay = new Date(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate() - 1, 19, 30, 0, 0)
+       		var PostDepartureDay = new Date(StartDate.getFullYear(), StartDate.getMonth(), StartDate.getDate() + 1, 9, 30, 0, 0)
+       		var PreReturnDay = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() - 1, 20, 30, 0, 0)
+            var PostDayAfterReturn = new Date(EndDate.getFullYear(), EndDate.getMonth(), EndDate.getDate() + 1, 19, 00, 0, 0)
+
+			var tripClimateCold = formObject.values['checkboxCold']
+			var tripClimateHot = formObject.values['checkboxHot']
+			var tripVarClimate = formObject.values['checkboxVarClimate']
+
+			var tripInternational = formObject.values['checkboxInternational']
+			var tripUsa = formObject.values['checkboxUsa']
+
+			var tripFormalAttire = formObject.values['checkboxFormal']
+			var tripPet = formObject.values['checkboxPet']
+			var tripWork = formObject.values['checkboxWork']
+
+			var tripCleanHouse = formObject.values['checkboxCleanHouse']
+
+
+            //----------------PROJECT DEFINITION------------------------------------
+		    projectName = "Packing List for " + tripTitle
+		    var project = projectNamed(projectName) || new Project(projectName)
+		    project.status = Project.Status.Active
+		    project.containsSingletonActions = true
+
+
+            //----------------VARIABLES------------------------------------
+            //Personal details
+            var Medicine1 = "Medicine"
+            var Medicine2 = "Medicine"
+            var Medicine3 = "Medicine"
+            var Medicine4 = "Medicine"
+            var Postcard1 = "Send <name> a post card"
+            var Postcard2 = "Send <name> a post card"
+            var Playlist1 = "Ensure playlist is downloaded"
+            var Playlist2 = "Ensure playlist is downloaded"
+            var Playlist3 = "Ensure Download - Travel playlist is downloaded"
+
+
+            //----------------ITEMS FOR EVERY TRIP------------------------------------
+			//These are items that should be added to any trip regardless of climate, international status, or formal attire.
+            packingItemsBase = [Medicine1, Medicine2, Medicine3, Medicine4, Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Toothbrush", "Toothpaste", "Floss", "Razor", "Shaving gel", "PJs", "Deodorant", "Hair gel", "Hair powder", "Underwear", "Socks", "Shirts", "Pants", "Belt", "Apple Watch Bands Container", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Create a Photo Stream", "Upload the remaining photos to the Photo Stream", "Ensure all devices are charged up for the trip", "Ensure all devices are charged up for the return trip", "Shoes", "Unpack bag", "Put bag away", "Trim nose hair", "Lotion"]
+
+
+			//----------------CLIMATE SPECIFIC ITEMS------------------------------------
+			//Add items here only for cold climate travels.
+           	packingItemsColdClimate = ["Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots"]
+			//Add items here only for hot climate travels.
+			packingItemsHotClimate = ["Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Hiking boots", "Shorts"]
+            //Add items here only for a variable destination climate.
+			packingItemsVarClimate = ["Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Hiking boots", "Shorts", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer"]
+
+
+			//----------------ITEMS BASED ON LOCATION------------------------------------
+			//Add items here only for international travel.
+			packingItemsInternational = [Postcard1, Postcard2, "Switch YNAB Budget to the local currency", "Ensure the local language in the translate app is downloaded", "Defer OmniFocus weekly review", "Passport", "Turn on 1Password Travel Mode before leaving for home city airport", "Turn off 1Password Travel Mode when outside of destination airport", "Turn on 1Password Travel Mode when outside of destination airport", "Turn off 1Password Travel Mode when in home city airport", "Power converter", "Download an offline map for the destination", "Slippers", "Old hotel card for controlling the climate in the hotel room", "Turn off Macs"]
+            //Add safety items when travelling to the USA.
+            packingItemsUsa = ["Tourniquet", "Hemostatic gauze"]
+
+
+            //----------------MISCELLANEOUS ITEMS------------------------------------
+            //Add items here only if formal attire is required.
+            packingItemsFormalAttire = ["Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt(s)"]
+            packingItemsPet = ["Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Calming treats"]
+            //Add the actions to ensure that work knows about your time off.
+            packingItemsWork = ["Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my weekly review of work projects"]
+
+
+            //----------------HOUSE CLEANING ACTIONS------------------------------------
+			//Add house cleaning things that need to be done four days before departure
+			itemsCleanHouseFourDays = []
+			//Add house cleaning things that need to be done three days before departure
+			itemsCleanHouseThreeDays = []
+			//Add house cleaning things that need to be done two days before departure
+			itemsCleanHouseTwoDays = []
+
+
+            //----------------ITEMS PER DAY------------------------------------
+			//This is the default count of items added from the packingItemsBase list.
+            packingItems1PerDay = [Medicine1, Medicine2, Medicine3, "Underwear", "Socks", "Shirts"]
+			//This changes the count of these items added from the packingItemsBase list from one per day to one per two days.
+            packingItems1Per2Day = ["Shorts", "Pants"]
+			//This changes the count of these items added from the packingItemsBase list from one per day to two per day.
+			packingItems2Per1Day = [Medicine4]
+
+
+			//----------------ITEMS DUE DATE------------------------------------
+			packingItemsTwoDaysBeforeDepartureDay = ["Create a Photo Stream", "Trim nose hair"]
+			//These are items that should have a due date of the night before departure.
+            packingItemsPreDepartureDay = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt(s)", "Apple Watch Bands Container", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my Weekly Review of work projects", "Tourniquet", "Hemostatic gauze", "Shoes", "Download an offline map for the destination", "Slippers", "Old hotel card for controlling the climate in the hotel room", "Lotion"]
+            //These are items that should have a due date of the day after departure.
+   			packingItemsPostDepartureDay = ["Turn off 1Password Travel Mode when outside of destination airport"]
+            //These are items that should have a due date of the night before returning home.
+			packingItemsPreReturnDay = ["Ensure all devices are charged up for the return trip", "Turn on 1Password Travel Mode when outside of destination airport"]
+			//These are items that should have a due date of the day after returning home.
+			packingItemsPostDayAfterReturn = ["Upload the remaining photos to the Photo Stream", "Turn off 1Password Travel Mode when in home city airport", "Unpack bag", "Put bag away"]
+
+
+
+            //----------------ITEMS TO INCLUDE IN PROJECT------------------------------------
+			packingItems = tripClimateCold ? packingItemsColdClimate.concat(packingItems) : packingItems;
+			packingItems = tripClimateHot ? packingItemsHotClimate.concat(packingItems) : packingItems;
+			packingItems = tripVarClimate ? packingItemsVarClimate.concat(packingItems) : packingItems;
+
+			packingItems = tripInternational ? packingItemsInternational.concat(packingItems) : packingItems;
+			packingItems = tripUsa ? packingItemsUsa.concat(packingItems) : packingItems;
+
+			packingItems = tripFormalAttire ? packingItemsFormalAttire.concat(packingItems) : packingItems;
+			packingItems = tripPet ? packingItemsPet.concat(packingItems) : packingItems;
+			packingItems = tripWork ? packingItemsWork.concat(packingItems) : packingItems;
+
+
+            packingItems.forEach((packingItem)=>{
+                var amount = (packingItems1PerDay.includes(packingItem)) ? Number(tripDuration) : 1
+                if (packingItems1PerDay.includes(packingItem)){
+                    amount = Number(tripDuration)
+                } else if (packingItems1Per2Day.includes(packingItem)){
+                amount = Number(tripDuration) / 2
+                amount = (amount < 1) ? 1 : Math.ceil(amount)
+				} else if (packingItems2Per1Day.includes(packingItem)){
+                    amount = Number(tripDuration) * 2
+                    amount = (amount < 1) ? 1 : Math.ceil(amount)
+                } else {
+                    amount = 1
+                }
+				if (packingItemsPreDepartureDay.includes(packingItem)){
+                    actionDate = PreDepartureDay
+                } else if (packingItemsPostDepartureDay.includes(packingItem)){
+                    actionDate = PostDepartureDay
+                }  else if (packingItemsPreReturnDay.includes(packingItem)){
+					actionDate = PreReturnDay
+				} else if (packingItemsPostDayAfterReturn.includes(packingItem)){
+                  	actionDate = PostDayAfterReturn
+                } else if (packingItemsTwoDaysBeforeDepartureDay.includes(packingItem)) {
+                    actionDate = TwoDaysBeforeDepartureDay
+               	}
+				else {
+					actionDate = StartDate
+				}
+                suffix = (amount > 1) ? ` (${amount})` : ""
+                action = project.taskNamed(packingItem + suffix) || new Task(packingItem + suffix, project)
+                action.dueDate = actionDate
+                	//action.note = ""
+			})
+			document.windows[0].perspective = Perspective.BuiltIn.Projects
+	//		document.windows[0].selectObjects([project])
+		})
+
+		formPromise.catch(function(err){
+			console.log("form cancelled:", err.message)
+		})
+	});
+
+	action.validate = function(selection, sender) {
+		// validation code
+		// selection options: tasks, projects, folders, tags
+		return true
+	};
+	
+	return action;
+}();
+_;
