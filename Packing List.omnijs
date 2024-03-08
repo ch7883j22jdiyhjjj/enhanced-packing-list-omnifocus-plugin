@@ -61,11 +61,6 @@ var _ = function(){
 			"Traveling to the USA?",
 			false
 		)
-		checkboxPet = new Form.Field.Checkbox(
-			"checkboxPet",
-			"Is <petName> travelling?",
-			false
-		)
 		checkboxWork = new Form.Field.Checkbox(
 			"checkboxWork",
 			"OOO?",
@@ -74,11 +69,6 @@ var _ = function(){
 		checkboxVarClimate = new Form.Field.Checkbox(
 			"checkboxVarClimate",
 			"Variable Destination Climate?",
-			false
-		)
-		checkboxCleanHouse = new Form.Field.Checkbox(
-			"checkboxCleanHouse",
-			"Clean the house?",
 			false
 		)
 
@@ -93,9 +83,7 @@ var _ = function(){
 		inputForm.addField(checkboxInternational)
 		inputForm.addField(checkboxFormal)
 		inputForm.addField(checkboxUsa)
-		inputForm.addField(checkboxPet)
 		inputForm.addField(checkboxWork)
-		inputForm.addField(checkboxCleanHouse)
 
 
 		//----------------FIELD VALIDATIONS------------------------------------
@@ -135,10 +123,7 @@ var _ = function(){
 			var tripUsa = formObject.values['checkboxUsa']
 
 			var tripFormalAttire = formObject.values['checkboxFormal']
-			var tripPet = formObject.values['checkboxPet']
 			var tripWork = formObject.values['checkboxWork']
-
-			var tripCleanHouse = formObject.values['checkboxCleanHouse']
 
 
             //----------------PROJECT DEFINITION------------------------------------
@@ -185,18 +170,8 @@ var _ = function(){
             //----------------MISCELLANEOUS ITEMS------------------------------------
             //Add items here only if formal attire is required.
             packingItemsFormalAttire = ["Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt(s)"]
-            packingItemsPet = ["Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Calming treats"]
             //Add the actions to ensure that work knows about your time off.
             packingItemsWork = ["Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my weekly review of work projects"]
-
-
-            //----------------HOUSE CLEANING ACTIONS------------------------------------
-			//Add house cleaning things that need to be done four days before departure
-			itemsCleanHouseFourDays = []
-			//Add house cleaning things that need to be done three days before departure
-			itemsCleanHouseThreeDays = []
-			//Add house cleaning things that need to be done two days before departure
-			itemsCleanHouseTwoDays = []
 
 
             //----------------ITEMS PER DAY------------------------------------
@@ -211,7 +186,7 @@ var _ = function(){
 			//----------------ITEMS DUE DATE------------------------------------
 			packingItemsTwoDaysBeforeDepartureDay = ["Create a Photo Stream", "Trim nose hair"]
 			//These are items that should have a due date of the night before departure.
-            packingItemsPreDepartureDay = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt(s)", "Apple Watch Bands Container", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Towel", "Dog food", "Measuring cup", "Green ball", "Red kong", "Black tire", "Lead", "Collar", "Treats", "Dog bowls", "Poopie bags", "Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my Weekly Review of work projects", "Tourniquet", "Hemostatic gauze", "Shoes", "Download an offline map for the destination", "Slippers", "Old hotel card for controlling the climate in the hotel room", "Lotion"]
+            packingItemsPreDepartureDay = [Medicine1, Medicine2, Medicine3, Medicine4, "Swap out Tesla card for BECU card", Playlist1, Playlist2, Playlist3, "AirPods (Max)/Charging cables bag", "Going out bag", "Reusable grocery bag", "Water bottle", "Underwear", "Socks", "Shirts", "Shorts", "Pants", "Tuxedo", "Suit coat", "Suit pants", "Tie", "Bowtie", "Dress socks", "Dress shoes", "Belt", "Suspenders", "Cuff links", "French cuff shirt", "Button down shirt(s)", "Apple Watch Bands Container", "Turn off DJ Roomba automation(s)", "Turn off Macs", "Power block", "Glasses case", "Lube", "Empty the kitchen compost bin into the composter", "Glasses cleaner", "Notify the neighbors we are away", "Sleep mask", "Create a free wifi address", "Sunscreen", "Bathing suit", "Sunhat", "Sandals", "Gesha Fans", "Swim goggles", "Crampons", "Snow pants", "Winter jacket", "Ear muffs", "Gloves/mittens", "Base layer", "Hiking boots", "Winter boots", "Schedule Out of Office Response", "Add OOO event to personal calendar", "Submit to absence tracker", "Make a backup of bookmarks", "Make sure I have no changes assigned to me", "Cancel my scheduled meetings", "Reschedule my Weekly Review of work projects", "Tourniquet", "Hemostatic gauze", "Shoes", "Download an offline map for the destination", "Slippers", "Old hotel card for controlling the climate in the hotel room", "Lotion"]
             //These are items that should have a due date of the day after departure.
    			packingItemsPostDepartureDay = ["Turn off 1Password Travel Mode when outside of destination airport"]
             //These are items that should have a due date of the night before returning home.
@@ -223,35 +198,31 @@ var _ = function(){
 
             //----------------ITEMS TO INCLUDE IN PROJECT------------------------------------
             if (tripVarClimate) {
-                packingItems = packingItemsVarClimate.concat(packingItems);
+                packingItems = packingItemsVarClimate.concat(packingItemsBase);
             }
 
             if (tripClimateCold) {
-                packingItems = packingItemsColdClimate.concat(packingItems);
+                packingItems = packingItemsColdClimate.concat(packingItemsBase);
             }
 
             if (tripClimateHot) {
-                packingItems = packingItemsHotClimate.concat(packingItems);
+                packingItems = packingItemsHotClimate.concat(packingItemsBase);
             }
 
             if (tripInternational) {
-                packingItems = packingItemsInternational.concat(packingItems);
+                packingItems = packingItemsInternational.concat(packingItemsBase);
             }
 
             if (tripUsa) {
-                packingItems = packingItemsUsa.concat(packingItems);
+                packingItems = packingItemsUsa.concat(packingItemsBase);
             }
 
             if (tripFormalAttire) {
-                packingItems = packingItemsFormalAttire.concat(packingItems);
-            }
-
-            if (tripPet) {
-                packingItems = packingItemsPet.concat(packingItems);
+                packingItems = packingItemsFormalAttire.concat(packingItemsBase);
             }
 
             if (tripWork) {
-                packingItems = packingItemsWork.concat(packingItems);
+                packingItems = packingItemsWork.concat(packingItemsBase);
             }
 
             packingItems.forEach((packingItem)=>{
